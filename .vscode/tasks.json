@@ -4,6 +4,7 @@
             "label": "compile",
             "command": "g++",
             "args": [
+                "--std=c++11",
                 "-g",
                 "-DDEBUG_TEST_LYJ",
                 "${file}",
