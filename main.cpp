@@ -7,76 +7,99 @@
 #include <map>
 #include <iterator>
 #include <vector>
+#include <ctype.h>
+#include <array>
+#include <numeric>
+#include <stack>
+#include <stdbool.h>
 
 using namespace std;
-
-bool string_is_same(const string &a, const string &b)
+struct pos_t
 {
-    size_t len = a.size();
-    if(len != b.size()) {
-        return false;
-    }
-    int cnt[26] = {0};
-    for(int i = 0; i < len; ++i)
-    {
-        ++cnt[a[i] - 'a'];
-    }
-
-    for(int i = 0; i < len; ++i)
-    {
-        --cnt[b[i] - 'a'];
-    }
-
-    for(int i = 0; i < 26; ++i)
-    {
-        if(cnt[i] != 0) {
-            return false;
-        }
-    }
-    return true;
+    int x, y;
 };
+
+static void judge_and_record(const char *old_string, map<string, string> & path, pos_t &m_pos, deque<pos_t> &queue)
+{
+    char new_string[128];
+    sprintf(new_string, "(%d,%d)", m_pos.x, m_pos.y);
+
+    path[new_string] = old_string;
+    queue.push_back(m_pos);
+}
 
 int main(void)
 {
 #ifdef DEBUG_TEST_LYJ
     freopen("input.txt", "r", stdin);
 #endif
-    int cnt;
-    vector<string> string_list;
-    cin >> cnt;
-    for(int index = 0; index < cnt; ++index)
+    int rows, cols;
+    cin >> rows >> cols;
+    vector<vector<int>> map_data(rows, vector<int>(cols));
+    vector<vector<int>> has_searched(rows, vector<int>(cols, 0));
+    for (int row = 0; row < rows; ++row)
     {
-        string data;
-        cin >> data;
-        string_list.push_back(data);
+        for (int col = 0; col < cols; ++col)
+        {
+            cin >> map_data[row][col];
+        }
     }
-
-    string template_string;
-    cin >> template_string;
-    vector<string> target_list;
-    for(auto string_itor = string_list.begin(); string_itor < string_list.end(); ++string_itor)
+    map<string, string> path;
+    deque<pos_t> node_queue;
+    node_queue.push_back({0, 0});
+    while (node_queue.empty() == false)
     {
-        if(string_itor->size() != template_string.size()) {
-            continue;
+        pos_t current_pos = node_queue.front();
+        char buf[128];
+        sprintf(buf, "(%d,%d)", current_pos.x, current_pos.y);
+        if (current_pos.x == rows - 1 && current_pos.y == cols - 1)
+        {
+            break;
+        }
+        node_queue.pop_front();
+        has_searched[current_pos.x][current_pos.y] = 1;
+        int x = current_pos.x;
+        int y = current_pos.y + 1;
+        if(y < cols && map_data[x][y] == 0 && has_searched[x][y] == 0) {
+            pos_t tmp = {x, y};
+            judge_and_record(buf, path, tmp, node_queue);
         }
 
-            if (*string_itor != template_string)
-            {
-                if (string_is_same(*string_itor, template_string))
-                {
-                    target_list.push_back(*string_itor);
-                }
-            }
+        x = current_pos.x + 1;
+        y = current_pos.y;
+        if(x < rows && map_data[x][y] == 0 && has_searched[x][y] == 0) {
+            pos_t tmp = {x, y};
+            judge_and_record(buf, path, tmp, node_queue);
+        }
+
+        x = current_pos.x;
+        y = current_pos.y - 1;
+        if(y >= 0 && map_data[x][y] == 0&& has_searched[x][y] == 0) {
+            pos_t tmp = {x, y};
+            judge_and_record(buf, path, tmp, node_queue);
+        }
+        
+        x = current_pos.x - 1;
+        y = current_pos.y;
+        if(x >= 0 && map_data[x][y] == 0&& has_searched[x][y] == 0) {
+            pos_t tmp = {x, y};
+            judge_and_record(buf, path, tmp, node_queue);
+        }
     }
 
-    sort(target_list.begin(), target_list.end());
-    int index = 0;
-    cin >> index;
-    if(index > 0 && target_list.size()) {
+    char temp_buf[128];
+    sprintf(temp_buf,"(%d,%d)", rows-1, cols-1);
+    string tmp_pos(temp_buf);
+    stack<string> real_path;
+    while(tmp_pos != "(0,0)") {
+        real_path.push(tmp_pos);
+        tmp_pos = path[tmp_pos];
+    }
 
-        cout << target_list.size() << endl << target_list[index - 1] << endl;
-    } else {
-        cout << 0 << endl;
+    cout << "(0,0)" << endl;
+    while(real_path.size() > 0) {
+        cout << real_path.top() << endl;
+        real_path.pop();
     }
     return 0;
 }
