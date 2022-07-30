@@ -15,22 +15,34 @@
 
 using namespace std;
 
-struct data_t {
-    int len;
-    int a_end;
-    int b_end;
-};
-
+int max_sub(vector<int> &data)
+{
+    int len = data.size();
+    vector<int> dp(len, 1);
+    for (int i = 0; i < len; ++i)
+    {
+        for (int j = 0; j < i; ++j)
+        {
+            if (data[i] > data[j])
+            {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+    return *max_element(dp.begin(),dp.end());
+}
 int main(void)
 {
 #ifdef DEBUG_TEST_LYJ
     freopen("input.txt", "r", stdin);
 #endif
-    vector<string> m_test{"abc", "def", "ghi"};
-    sort(m_test.begin(), m_test.end());
-    cout << m_test[0] << " " << m_test[1] << " " << m_test[2] << endl;
-    while(next_permutation(m_test.begin(), m_test.end())) {
-        cout << m_test[0] << " " << m_test[1] << " " << m_test[2] << endl;
+    int num;
+    cin >> num;
+    vector<int> num_list(num);
+    for (int i = 0; i < num; ++i)
+    {
+        cin >> num_list[i];
     }
+    cout << max_sub(num_list) << endl;
     return 0;
 }
