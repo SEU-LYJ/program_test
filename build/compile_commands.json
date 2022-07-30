@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/liuyingjie/Desktop/program_test/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/hello.dir/main.cpp.o -c /home/liuyingjie/Desktop/program_test/main.cpp",
+  "file": "/home/liuyingjie/Desktop/program_test/main.cpp"
+}
+]
