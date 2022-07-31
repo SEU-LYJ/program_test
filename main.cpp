@@ -15,34 +15,26 @@
 
 using namespace std;
 
-int max_sub(vector<int> &data)
-{
-    int len = data.size();
-    vector<int> dp(len, 1);
-    for (int i = 0; i < len; ++i)
-    {
-        for (int j = 0; j < i; ++j)
-        {
-            if (data[i] > data[j])
-            {
-                dp[i] = max(dp[i], dp[j] + 1);
-            }
-        }
-    }
-    return *max_element(dp.begin(),dp.end());
-}
 int main(void)
 {
 #ifdef DEBUG_TEST_LYJ
     freopen("input.txt", "r", stdin);
 #endif
+    set<int> set_data;
     int num;
     cin >> num;
-    vector<int> num_list(num);
-    for (int i = 0; i < num; ++i)
+    for(int i =0; i < num;++i)
     {
-        cin >> num_list[i];
+        int tmp;
+        cin >> tmp;
+        if(set_data.find(tmp) == set_data.end()) {
+            set_data.insert(tmp);
+        }
     }
-    cout << max_sub(num_list) << endl;
+
+    for(auto itor = set_data.begin(); itor != set_data.end(); ++itor)
+    {
+        cout << *itor << endl;
+    }
     return 0;
 }
